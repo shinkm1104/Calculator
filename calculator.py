@@ -15,7 +15,8 @@ class Interface( QMainWindow ):
     def initUI( self ):
         self.title = "계산기 프로그램"
         self.setWindowTitle( self.title )
-        self.setGeometry( 300, 300, 300, 200 )
+        self.setGeometry( 1000, 300, 300, 200 )
+        self.center()
 
         main_widget = QWidget( self )
         self.setCentralWidget( main_widget )
@@ -127,13 +128,19 @@ class Interface( QMainWindow ):
 
     # (py)qt에서 약속된 지정함수
     def keyPressEvent( self, e ):
-        print ( e.key() )
-        if e.key() == 16777220 or e.key() == 16777221 :
+        if e.key() == 16777220 or e.key() == 16777221 or e.key() == 61 :
             self.btn_operation_clicked( "=" )
         elif e.key() >= 48 and e.key() <= 57:
             self.num_btn_clicked( chr( e.key() ))
         elif e.key() == 42 or e.key() == 43 or e.key() == 45 or e.key() == 46 or e.key() == 47:
             self.btn_operation_clicked( chr( e.key() ))
+
+    # 추가할 것 중앙 정렬 코드
+    def center( self ):
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter( cp )
+        self.move( qr.topLeft() )
 
 class createButton( QToolButton ):
     def __init__( self, text ):
