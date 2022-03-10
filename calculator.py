@@ -29,7 +29,7 @@ class Interface( QMainWindow ):
         
         number_btn_dict = {}
         for number in range( 0, 10 ):
-            number_btn_dict[ number ] = QPushButton( str( number ) )
+            number_btn_dict[ number ] = createButton( str( number ) )
             number_btn_dict[ number ].clicked.connect( lambda state, num = number : self.num_btn_clicked(num))
             if number >0:
                 x,y = divmod(9-number, 3)
@@ -38,16 +38,16 @@ class Interface( QMainWindow ):
                 layout_btn.addWidget( number_btn_dict[number], 3, 0 )
         
         # 사칙연산 버튼 생성 #
-        btn_dot   = QPushButton( "." )
-        btn_plus  = QPushButton( "+" )
-        btn_minus = QPushButton( "-" )
-        btn_multy = QPushButton( "x" )
-        btn_div   = QPushButton( "/" )
-        btn_equal = QPushButton( "=" )
-        btn_max   = QPushButton( "max" )
-        btn_min   = QPushButton( "min" )
-        btn_reset = QPushButton( "C" )
-        btn_del   = QPushButton( "CE" )
+        btn_dot   = createButton( "." )
+        btn_plus  = createButton( "+" )
+        btn_minus = createButton( "-" )
+        btn_multy = createButton( "x" )
+        btn_div   = createButton( "/" )
+        btn_equal = createButton( "=" )
+        btn_max   = createButton( "max" )
+        btn_min   = createButton( "min" )
+        btn_reset = createButton( "C" )
+        btn_del   = createButton( "CE" )
 
         btn_dot.clicked.connect( lambda state,   operation  = ".":   self.btn_operation_clicked( operation ))
         btn_plus.clicked.connect( lambda state,  operation  = "+":   self.btn_operation_clicked( operation ))
@@ -81,11 +81,11 @@ class Interface( QMainWindow ):
     def num_btn_clicked( self, num ):
         if self.start_sig == True :
             self.line.clear()
+            self.start_sig = False
 
         line = self.line.text()
         line += str( num )
         self.line.setText( line )
-        self.start_sig = False
         self.operator = False
 
     def btn_operation_clicked(self, operation):
@@ -124,6 +124,23 @@ class Interface( QMainWindow ):
         else :
             result = min( self.result_stack )
             self.line.setText( str( result ) )
+
+    # (py)qt에서 약속된 지정함수
+    def keyPressEvent( self, e ):
+        print ( e.key() )
+        if e.key() == 16777220 or e.key() == 16777221 :
+            self.btn_operation_clicked( "=" )
+        elif e.key() >= 48 and e.key() <= 57:
+            self.num_btn_clicked( chr( e.key() ))
+        elif e.key() == 42 or e.key() == 43 or e.key() == 45 or e.key() == 46 or e.key() == 47:
+            self.btn_operation_clicked( chr( e.key() ))
+
+class createButton( QToolButton ):
+    def __init__( self, text ):
+        super().__init__()
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred) # 버튼의 사이즈 규정 결정
+        self.setText( text )
+
 
 if __name__ == "__main__":
     app = QApplication( sys.argv )
